@@ -96,7 +96,9 @@ class decision_tree(classifier):
         sorted_classcount = sorted(classcount.items(), key=itemgetter(1), reverse=True)
         return sorted_classcount[0][0]
 
-    def build_tree(self, X, Y):
+    def build_tree(self, X, Y, max_depth,depth):
+        if max_depth!=-1 and depth>max_depth:
+            return
         # IF there's only one instance or one class, don't continue to split
         if len(Y) <= 1 or len(self.class_dict(Y)) == 1:
             return self.class_dict(Y)
@@ -118,11 +120,11 @@ class decision_tree(classifier):
                 this_tree[best_feature] = dict()
             if value not in this_tree[best_feature]:
                 this_tree[best_feature][value] = 0
-            this_tree[best_feature][value] = self.build_tree(subtree_x, subtree_y)
+            this_tree[best_feature][value] = self.build_tree(subtree_x, subtree_y,max_depth,depth+1)
         return this_tree
 
-    def fit(self, X, Y):
-        self.tree = self.build_tree(X, Y)
+    def fit(self, X, Y, max_depth):
+        self.tree = self.build_tree(X, Y, max_depth,0)
 
     def predict(self, instances):
         predicts = []
@@ -137,8 +139,6 @@ class decision_tree(classifier):
             return tree
         attribute_index = list(tree.keys())[0]
         attribute_values = list(tree.values())[0]
-        # print("index : "+str(attribute_index))
-        # print("values : "+str(attribute_values))
         if not isinstance(attribute_values, dict):
             return attribute_index
         instance_attribute_value = instance[attribute_index]

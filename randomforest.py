@@ -36,7 +36,7 @@ class randomforest(classifier):
             feature,selectedX, selectedY = self.random_data(X, Y)
             tree = decision_tree()
             print("Fitting "+str(i))
-            tree.fit(selectedX, selectedY)
+            tree.fit(selectedX, selectedY,self.max_depth)
             self.trees.append(tree)
             self.features.append(feature)
 
@@ -57,7 +57,6 @@ class randomforest(classifier):
                 predicts.append("None")
             predicts.append(Counter(row).most_common()[0][0])
         return predicts
-        return ret
 
     def get_data_set(self,index,X):
         objX = np.array([[]]*len(X))
